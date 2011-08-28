@@ -2,7 +2,7 @@
 	var $d = $(document);
 
 	var config = {
-		server: 'deckjs-remote.no.de',
+		server: 'http://deckjs-remote.no.de',
 		port: null
 	}
 
