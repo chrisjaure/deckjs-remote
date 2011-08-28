@@ -1,11 +1,14 @@
 {
 	"name": "deckjs-remote",
 	"version": "0.1.0",
+	"description": "Remote control for deck.js",
+	"author": "Chris Jaure (http://cleverchris.com)",
 	"scripts": {
 		"start": "node server.js"
 	},
 	"dependencies": {
-		"socket.io": "0.7"
+		"socket.io": "0.7",
+		"connect": "1.6"
 	}
 
 }
