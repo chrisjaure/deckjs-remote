@@ -1,0 +1,11 @@
+{
+	"name": "deckjs-remote",
+	"version": "0.1.0",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"socket.io": "0.7"
+	}
+
+}
