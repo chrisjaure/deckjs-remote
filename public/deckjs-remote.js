@@ -21,17 +21,18 @@
 		var socket = io.connect(options.server, {port: options.port || 80}),
 			is_master = (window.location.hash.substring(1) == 'master');
 
+		socket.on('connect', function(){
+			socket.emit('join', { url: window.location.href, is_master: is_master });
+		});
+
 		if (is_master) {
-			socket.on('connect', function(){
-				socket.emit('master_connect', window.location.href);
-			});
 			$d.bind('deck.change', function(e, prev, next){
 				socket.emit('change', {current: next});
 			});
 		}
 		else {
-			socket.on('slide', function(data){
-				$[deck]('go', data.current);
+			socket.on('slide', function(current){
+				$[deck]('go', current);
 			});
 		}
 	}
