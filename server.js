@@ -3,13 +3,13 @@ var connect = require('connect'),
 	server = connect.createServer(),
 	io,
 	decks = {},
-	util = {};
-
-util.url = require('url');
+	util = {
+        url: require('url')
+	};
 
 // set up server
 server.use(connect.static(__dirname + '/public'));
-server.listen(80);
+server.listen(process.env.C9_PORT || 80);
 
 // set up the socket
 io = socketio.listen(server);
@@ -70,4 +70,3 @@ function defaultDeckState() {
 		has_master: false
 	};
 }
-
