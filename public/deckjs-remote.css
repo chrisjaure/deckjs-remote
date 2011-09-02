@@ -1,0 +1,34 @@
+.deck-container .deck-remote-join-message,
+.deck-container .deck-remote-leave-message {
+	position: fixed;
+	top: 0;
+	left: 50%;
+	visibility: hidden;
+	margin-left: -150px;
+	width: 300px;
+	padding: 10px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	z-index: 999;
+	transition: top, 300ms;
+	-moz-transition: top, 300ms;
+	-webkit-transition: top, 300ms;
+	-o-transition: top, 300ms;
+	-ms-transition: top, 300ms;
+
+	background-color: #fff;
+	border: solid 10px #222;
+	border-radius: 0 0 5px 5px;
+	box-shadow:0 0 30px rgba(0,0,0,0.5);
+}
+
+.deck-container .deck-remote-links {
+	text-align: right;
+	color: #ccc;
+	margin-bottom:0;
+}
+
+.deck-container .deck-remote-join-link {
+	font-weight:bold;
+}

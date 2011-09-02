@@ -26,6 +26,10 @@ io.sockets.on('connection', function(client){
 		if (data.is_master) {
 			deck.has_master = true;
 
+			deck.viewers.forEach(function(viewer){
+				viewer.emit('notify', { master: true });
+			});
+
 			client.on('change', function(data){
 				deck.current = data.current;
 				// notify viewers of change
@@ -36,11 +40,14 @@ io.sockets.on('connection', function(client){
 
 			client.on('disconnect', function(){
 				deck.has_master = false;
+				deck.viewers.forEach(function(viewer){
+					viewer.emit('notify', { master: false });
+				});
 			});
 		}
 		else {
 			if (deck.has_master) {
-				client.emit('slide', deck.current);
+				client.emit('notify', {master: true, current: deck.current});
 			}
 
 			deck.viewers.push(client);
