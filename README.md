@@ -46,4 +46,5 @@ Controlling this deck will control all others currently joined to the session.
 
 ## TODO
 
+- Find better way to designate a master
 - Add a way to leave a session.
