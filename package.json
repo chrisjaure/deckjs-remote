@@ -8,7 +8,7 @@
 	},
 	"dependencies": {
 		"socket.io": "0.7",
-		"connect": "1.6"
+		"connect": "1.7"
 	}
 
 }
