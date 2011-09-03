@@ -98,7 +98,7 @@
 
 	function setup(options) {
 
-		var is_master = (window.location.search.search(/\bmaster\b/) != -1);
+		var is_master = (window.location.search.search(/[\?&]master([&=]|$)/) != -1);
 
 		key = options.key || key;
 		socket = io.connect(options.server, {port: options.port || 80});
