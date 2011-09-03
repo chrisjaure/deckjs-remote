@@ -13,7 +13,8 @@ You can use the service running at http://deckjs-remote.no.de
 			$.deck('.slide');
 			$.deck('remote', {
 				//server: 'http://deckjs-remote.no.de',
-				//port: 80
+				//port: 80,
+				//key: [md5 hash]
 			})
 		});
 	</script>
@@ -40,11 +41,14 @@ You'll need to include this mark-up as well:
 
 ## Usage
 
-To set up the remote, go to your slide url and add the hash #master to the url, e.g. http://imakewebthings.github.com/deck.js/#master
+To set up the remote, go to your slide url and add the param master to the url, e.g. http://imakewebthings.github.com/deck.js/?master
+
+You will then be prompted to enter the key. The default key is "master".
 
 Controlling this deck will control all others currently joined to the session.
 
 ## TODO
 
-- Find better way to designate a master
+- Refactor UI.
+- Clean up inactive sessions.
 - Add a way to leave a session.
