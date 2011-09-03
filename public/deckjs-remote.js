@@ -6,6 +6,8 @@
 		},
 		joined = false,
 		current_slide = 0,
+		key = 'eb0a191797624dd3a48fa681d3061212',
+		socket,
 		UI;
 
 	$[deck]('extend', 'remote', function(o){
@@ -22,6 +24,8 @@
 		create: function(){
 			this.joinMessage = $('.deck-remote-join-message');
 			this.leaveMessage = $('.deck-remote-leave-message');
+			this.masterMessage = $('.deck-remote-master-message');
+			this.hideMessages();
 
 			// join link
 			this.joinMessage.find('.deck-remote-join-link')
@@ -39,8 +43,21 @@
 					e.preventDefault();
 					this.hideMessages();
 				}, this));
-
-			this.hideMessages();
+			
+			// master join form
+			this.masterMessage.find('.deck-remote-master-form')
+				.submit($.proxy(function(e){
+					e.preventDefault();
+					socket.emit('master', {
+						key: key,
+						input: $('.deck-remote-password').val()
+					});
+				}, this));
+			
+			// master password
+			$('.deck-remote-password').keydown(function(e){
+				e.stopPropagation();
+			});
 		},
 
 		showMessage: function(message) {
@@ -59,26 +76,54 @@
 			this.showMessage(this.leaveMessage);
 		},
 
+		showMasterMessage: function(){
+			this.showMessage(this.masterMessage);
+		},
+
+		showMasterFeedback: function(message){
+			this.masterMessage.find('.deck-remote-master-feedback')
+				.text(message)
+				.show();
+		},
+
 		hideMessages: function(){
-			this.joinMessage.add(this.leaveMessage)
-				.css('top', -this.joinMessage.outerHeight() - 40);
+			this.joinMessage
+				.add(this.leaveMessage)
+				.add(this.masterMessage)
+				.each(function(){
+					$(this).css('top', -$(this).outerHeight() - 40);
+				});
 		}
 	};
 
 	function setup(options) {
 
-		var socket = io.connect(options.server, {port: options.port || 80}),
-			is_master = (window.location.hash.substring(1) == 'master');
+		var is_master = (window.location.search.search(/master/) != -1);
+
+		key = options.key || key;
+		socket = io.connect(options.server, {port: options.port || 80});
 
 		UI.create();
-
+		
 		socket.on('connect', function(){
 			socket.emit('join', { url: window.location.href, is_master: is_master });
 		});
 
 		if (is_master) {
-			$d.bind('deck.change', function(e, prev, next){
-				socket.emit('change', {current: next});
+			UI.showMasterMessage();
+			socket.on('master', function(success){
+				if (success) {
+					$d.bind('deck.change', function(e, prev, next){
+						socket.emit('change', {current: next});
+					});
+					UI.showMasterFeedback('Session started!');
+					setTimeout(function(){
+						UI.hideMessages();
+					}, 3000);
+				}
+				else {
+					UI.showMasterFeedback('Wrong password!');
+				}
 			});
 		}
 		else {
@@ -101,4 +146,5 @@
 			});
 		}
 	}
+
 })(jQuery, 'deck');

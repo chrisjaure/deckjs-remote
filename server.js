@@ -4,7 +4,8 @@ var connect = require('connect'),
 	io,
 	decks = {},
 	util = {
-        url: require('url')
+        url: require('url'),
+        crypto: require('crypto')
 	};
 
 // set up server
@@ -24,6 +25,18 @@ io.sockets.on('connection', function(client){
 		}
 
 		if (data.is_master) {
+			setupMaster(client, deck);
+		}
+		else {
+			setupViewer(client, deck);
+		}
+	});
+});
+
+function setupMaster(client, deck) {
+	client.on('master', function(data){
+		if (verifyKey(data.key, data.input)) {
+			client.emit('master', true);
 			deck.has_master = true;
 
 			deck.viewers.forEach(function(viewer){
@@ -46,27 +59,31 @@ io.sockets.on('connection', function(client){
 			});
 		}
 		else {
-			if (deck.has_master) {
-				client.emit('notify', {master: true, current: deck.current});
-			}
-
-			deck.viewers.push(client);
-
-			client.on('disconnect', function(){
-				deck.viewers.forEach(function(viewer, i){
-					if (viewer == client) {
-						deck.viewers.splice(i, 1);
-					}
-				});
-			});
+			client.emit('master', false);
 		}
+			
 	});
-});
+}
 
+function setupViewer(client, deck) {
+	if (deck.has_master) {
+		client.emit('notify', {master: true, current: deck.current});
+	}
+
+	deck.viewers.push(client);
+
+	client.on('disconnect', function(){
+		deck.viewers.forEach(function(viewer, i){
+			if (viewer == client) {
+				deck.viewers.splice(i, 1);
+			}
+		});
+	});
+}
 
 function getIdFromUrl(url) {
 	var parsed = util.url.parse(url);
-
+	console.log(parsed.hostname + parsed.pathname);
 	return parsed.hostname + parsed.pathname;
 }
 
@@ -76,4 +93,8 @@ function defaultDeckState() {
 		viewers: [],
 		has_master: false
 	};
+}
+
+function verifyKey(key, input) {
+	return (key == util.crypto.createHash('md5').update(input).digest('hex'));
 }

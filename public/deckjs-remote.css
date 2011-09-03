@@ -1,5 +1,6 @@
 .deck-container .deck-remote-join-message,
-.deck-container .deck-remote-leave-message {
+.deck-container .deck-remote-leave-message,
+.deck-container .deck-remote-master-message {
 	position: fixed;
 	top: 0;
 	left: 50%;
@@ -31,4 +32,9 @@
 
 .deck-container .deck-remote-join-link {
 	font-weight:bold;
+}
+
+.deck-container .deck-remote-master-feedback {
+	display:none;
+	font-style:italic;
 }
