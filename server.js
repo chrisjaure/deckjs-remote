@@ -22,7 +22,7 @@ io.sockets.on('connection', function(client){
 			deck = decks[id];
 		
 		if (!deck) {
-			decks[id] = deck = defaultDeckState();
+			decks[id] = deck = defaultDeckState(id);
 		}
 
 		deck.timestamp = Date.now();
@@ -46,24 +46,17 @@ function setupMaster(client, deck) {
 			client.emit('master', true);
 			deck.has_master = true;
 
-			deck.viewers.forEach(function(viewer){
-				viewer.emit('notify', { master: true });
-			});
+			io.sockets.in(deck.id).emit('notify', { master: true });
 
 			client.on('change', function(data){
 				deck.current = data.current;
 				deck.timestamp = Date.now();
-				// notify viewers of change
-				deck.viewers.forEach(function(viewer){
-					viewer.emit('slide', deck.current);
-				});
+				io.sockets.in(deck.id).emit('slide', deck.current);
 			});
 
 			client.on('disconnect', function(){
 				deck.has_master = false;
-				deck.viewers.forEach(function(viewer){
-					viewer.emit('notify', { master: false });
-				});
+				io.sockets.in(deck.id).emit('notify', { master: false });
 			});
 		}
 		else {
@@ -78,15 +71,7 @@ function setupViewer(client, deck) {
 		client.emit('notify', {master: true, current: deck.current});
 	}
 
-	deck.viewers.push(client);
-
-	client.on('disconnect', function(){
-		deck.viewers.forEach(function(viewer, i){
-			if (viewer == client) {
-				deck.viewers.splice(i, 1);
-			}
-		});
-	});
+	client.join(deck.id);
 }
 
 function getIdFromUrl(url) {
@@ -95,10 +80,10 @@ function getIdFromUrl(url) {
 	return parsed.hostname + parsed.pathname;
 }
 
-function defaultDeckState() {
+function defaultDeckState(id) {
 	return {
+		id: id,
 		current: 0,
-		viewers: [],
 		has_master: false
 	};
 }
