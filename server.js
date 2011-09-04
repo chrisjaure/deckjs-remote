@@ -6,7 +6,8 @@ var connect = require('connect'),
 	util = {
         url: require('url'),
         crypto: require('crypto')
-	};
+	},
+	max_inactive_time = 1800000; // half-hour
 
 // set up server
 server.use(connect.static(__dirname + '/public'));
@@ -24,6 +25,8 @@ io.sockets.on('connection', function(client){
 			decks[id] = deck = defaultDeckState();
 		}
 
+		deck.timestamp = Date.now();
+
 		if (data.is_master) {
 			setupMaster(client, deck);
 		}
@@ -32,6 +35,10 @@ io.sockets.on('connection', function(client){
 		}
 	});
 });
+
+setInterval(function(){
+	clearInactiveSessions();
+}, max_inactive_time);
 
 function setupMaster(client, deck) {
 	client.on('master', function(data){
@@ -45,6 +52,7 @@ function setupMaster(client, deck) {
 
 			client.on('change', function(data){
 				deck.current = data.current;
+				deck.timestamp = Date.now();
 				// notify viewers of change
 				deck.viewers.forEach(function(viewer){
 					viewer.emit('slide', deck.current);
@@ -83,7 +91,7 @@ function setupViewer(client, deck) {
 
 function getIdFromUrl(url) {
 	var parsed = util.url.parse(url);
-	console.log(parsed.hostname + parsed.pathname);
+	
 	return parsed.hostname + parsed.pathname;
 }
 
@@ -97,4 +105,13 @@ function defaultDeckState() {
 
 function verifyKey(key, input) {
 	return (key == util.crypto.createHash('md5').update(input).digest('hex'));
+}
+
+function clearInactiveSessions() {
+	var now = Date.now();
+	for (var key in decks) {
+		if (now - decks[key].timestamp > max_inactive_time) {
+			delete decks[key];
+		}
+	}
 }
