@@ -63,5 +63,4 @@ Controlling this deck will control all others currently joined to the session.
 ## TODO
 
 - Refactor UI.
-- Clean up inactive sessions.
 - Add a way to leave a session.
