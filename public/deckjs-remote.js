@@ -10,6 +10,8 @@
 		socket,
 		UI;
 
+	$[deck].remote = true;
+
 	$[deck]('extend', 'remote', function(o){
 		var options = $.extend({}, config, o || {});
 		Modernizr.load({
