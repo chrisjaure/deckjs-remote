@@ -16,6 +16,12 @@ server.listen(process.env.C9_PORT || 80);
 // set up the socket
 io = socketio.listen(server);
 
+io.configure('production', function(){
+	io.enable('browser client minification');  // send minified client
+	io.enable('browser client etag');          // apply etag caching logic based on version number
+	io.set('log level', 1);                    // reduce logging
+});
+
 io.sockets.on('connection', function(client){
 	client.on('join', function(data){
 		var id = getIdFromUrl(data.url),
