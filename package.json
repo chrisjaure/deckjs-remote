@@ -9,6 +9,9 @@
 	"dependencies": {
 		"socket.io": "0.7",
 		"connect": "1.7"
+	},
+	"devDependencies": {
+		"jasmine-node": "1.0"
 	}
 
 }
