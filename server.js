@@ -1,6 +1,8 @@
-var connect = require('connect'),
+var http = require('http'),
+	connect = require('connect'),
 	socketio = require('socket.io'),
-	server = connect.createServer(),
+	app = connect(),
+	server,
 	io,
 	decks = {},
 	util = {
@@ -10,8 +12,14 @@ var connect = require('connect'),
 	max_inactive_time = 1800000; // half-hour
 
 // set up server
-server.use(connect.static(__dirname + '/public'));
-server.listen(process.env.C9_PORT || 80);
+app
+	.use(function(req, res, next) {
+		res.setHeader('Access-Control-Allow-Origin', '*');
+		next();
+	})
+	.use(connect.static(__dirname + '/public'));
+
+server = http.createServer(app).listen(process.env.C9_PORT || process.argv[2] || 80);
 
 // set up the socket
 io = socketio.listen(server);

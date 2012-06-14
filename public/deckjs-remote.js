@@ -23,7 +23,7 @@
 	});
 
 	UI = {
-		create: function(){
+		create: function(callback){
 			this.joinMessage = $('.deck-remote-join-message');
 			this.leaveMessage = $('.deck-remote-leave-message');
 			this.masterMessage = $('.deck-remote-master-message');
@@ -60,6 +60,8 @@
 			$('.deck-remote-password').keydown(function(e){
 				e.stopPropagation();
 			});
+
+			callback();
 		},
 
 		showMessage: function(message) {
@@ -95,6 +97,24 @@
 				.each(function(){
 					$(this).css('top', -$(this).outerHeight() - 40);
 				});
+		},
+		getView: function(options, callback) {
+			var $container = $('<div id="deckjs-remote" />');
+
+			$container
+				.load(options.server + (options.port ? ':'+options.port : '') + '/deckjs-remote.html', callback || $.noop)
+				.appendTo(document.body);
+		},
+		load: function(options, callback) {
+			callback = callback || $.noop;
+			if (!$('#deckjs-remote')[0]) {
+				this.getView(options, $.proxy(function() {
+					this.create(callback);
+				}, this));
+			}
+			else {
+				this.create(callback);
+			}
 		}
 	};
 
@@ -105,48 +125,51 @@
 		key = options.key || key;
 		socket = io.connect(options.server, {port: options.port || 80});
 
-		UI.create();
-		
 		socket.on('connect', function(){
 			socket.emit('join', { url: window.location.href, is_master: is_master });
 		});
 
-		if (is_master) {
-			UI.showMasterMessage();
-			socket.on('master', function(success){
-				if (success) {
-					$d.bind('deck.change', function(e, prev, next){
-						socket.emit('change', {current: next});
-					});
-					UI.showMasterFeedback('Session started!');
-					setTimeout(function(){
-						UI.hideMessages();
-					}, 3000);
-				}
-				else {
-					UI.showMasterFeedback('Wrong password!');
-				}
-			});
-		}
-		else {
-			socket.on('slide', function(current){
-				if (joined) {
-					$[deck]('go', current);
-				}
-				current_slide = current;
-			}).on('notify', function(data){
-				if (data.master && !joined) {
-					UI.showJoinMessage();
-				}
-				else if (joined) {
-					UI.showLeaveMessage();
-				}
+		UI.load(options, function() {
 
-				if (data.current) {
-					current_slide = data.current;
-				}
-			});
-		}
+			if (is_master) {
+				UI.showMasterMessage();
+				socket.on('master', function(success){
+					if (success) {
+						$d.bind('deck.change', function(e, prev, next){
+							socket.emit('change', {current: next});
+						});
+						UI.showMasterFeedback('Session started!');
+						setTimeout(function(){
+							UI.hideMessages();
+						}, 3000);
+					}
+					else {
+						UI.showMasterFeedback('Wrong password!');
+					}
+				});
+			}
+			else {
+				socket.on('slide', function(current){
+					if (joined) {
+						$[deck]('go', current);
+					}
+					current_slide = current;
+				}).on('notify', function(data){
+					if (data.master && !joined) {
+						UI.showJoinMessage();
+					}
+					else if (joined) {
+						UI.showLeaveMessage();
+					}
+
+					if (data.current) {
+						current_slide = data.current;
+					}
+				});
+			}
+
+		});
+
 	}
 
 })(jQuery, 'deck');

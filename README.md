@@ -4,52 +4,58 @@ This is a remote control plugin for [deck.js](http://imakewebthings.github.com/d
 
 ## Installation
 
-You can use the service running at http://deckjs-remote.no.de
+Run the server: 
+	
+	git clone https://github.com/chrisjaure/deckjs-remote.git && cd deckjs-remote
+	npm install
+	[NODE_ENV=production] node server.js [80]
 
-	<link rel="stylesheet" type="text/css" href="http://deckjs-remote.no.de/deckjs-remote.css" />
-    <script src="http://deckjs-remote.no.de/deckjs-remote.js"></script>
+Add the assets to your html:
+
+	<link rel="stylesheet" type="text/css" href="[your_server]/deckjs-remote.css" />
+	<script src="[your_server]/deckjs-remote.js"></script>
 	<script>
 		$(function(){
 			$.deck('.slide');
 			$.deck('remote', {
-				//server: 'http://deckjs-remote.no.de',
+				server: [your_server],
 				//port: 80,
 				//key: [md5 hash]
 			})
 		});
 	</script>
 
-Or host it yourself.
+If you wish to support older browsers that don't support CORS, you'll need to include this mark-up as well:
 
-You'll need to include this mark-up as well:
-
-    <div class="deck-remote-join-message">
-        <p>There is a session available. Would you like to join?</p>
-        <p class="deck-remote-links">
-            <a href="#" class="deck-remote-ignore-link">Ignore</a>
-            |
-            <a href="#" class="deck-remote-join-link">Join</a>
-        </p>
-    </div>
-    
-    <div class="deck-remote-leave-message">
-        <p>The session has ended.</p>
-        <p class="deck-remote-links">
-            <a href="#" class="deck-remote-close-link">Close</a>
-        </p>
-    </div>
-
-    <div class="deck-remote-master-message">
-		<p>Do you have the key?</p>
-		<p class="deck-remote-master-feedback"></p>
-		<form class="deck-remote-master-form" action="">
-			<p>
-				<input class="deck-remote-password" type="password" />
-			</p>
+	<div id="deck-remote">
+		<div class="deck-remote-join-message">
+			<p>There is a session available. Would you like to join?</p>
 			<p class="deck-remote-links">
-				<button type="submit">Start Session</button>
+				<a href="#" class="deck-remote-ignore-link">Ignore</a>
+				|
+				<a href="#" class="deck-remote-join-link">Join</a>
 			</p>
-		</form>	
+		</div>
+		
+		<div class="deck-remote-leave-message">
+			<p>The session has ended.</p>
+			<p class="deck-remote-links">
+				<a href="#" class="deck-remote-close-link">Close</a>
+			</p>
+		</div>
+
+		<div class="deck-remote-master-message">
+			<p>Do you have the key?</p>
+			<p class="deck-remote-master-feedback"></p>
+			<form class="deck-remote-master-form" action="">
+				<p>
+					<input class="deck-remote-password" type="password" />
+				</p>
+				<p class="deck-remote-links">
+					<button type="submit">Start Session</button>
+				</p>
+			</form>
+		</div>
 	</div>
 
 ## Usage
