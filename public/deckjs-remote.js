@@ -103,7 +103,7 @@
 
 			$container
 				.load(options.server + (options.port ? ':'+options.port : '') + '/deckjs-remote.html', callback || $.noop)
-				.appendTo(document.body);
+				.appendTo($[deck]('getContainer'));
 		},
 		load: function(options, callback) {
 			callback = callback || $.noop;
@@ -123,7 +123,7 @@
 		var is_master = (window.location.search.search(/[\?&]master([&=]|$)/) != -1);
 
 		key = options.key || key;
-		socket = io.connect(options.server, {port: options.port || 80});
+		socket = io.connect(options.server + (options.port ? ':'+options.port : ''));
 
 		socket.on('connect', function(){
 			socket.emit('join', { url: window.location.href, is_master: is_master });

@@ -21,20 +21,27 @@
 	background-color: #fff;
 	border: solid 10px #222;
 	border-radius: 0 0 5px 5px;
-	box-shadow:0 0 30px rgba(0,0,0,0.5);
+	box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.deck-container .deck-remote-password {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	width: 100%;
 }
 
 .deck-container .deck-remote-links {
 	text-align: right;
 	color: #ccc;
-	margin-bottom:0;
+	margin-bottom: 0;
 }
 
 .deck-container .deck-remote-join-link {
-	font-weight:bold;
+	font-weight: bold;
 }
 
 .deck-container .deck-remote-master-feedback {
-	display:none;
-	font-style:italic;
+	display: none;
+	font-style: italic;
 }

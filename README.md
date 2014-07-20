@@ -18,7 +18,7 @@ Add the assets to your html:
 		$(function(){
 			$.deck('.slide');
 			$.deck('remote', {
-				server: [your_server],
+				server: '[your_server]',
 				//port: 80,
 				//key: [md5 hash]
 			})
@@ -68,7 +68,7 @@ Controlling this deck will control all others currently joined to the session.
 
 ## MIT License
 
-Copyright (c) 2011 Chris Jaure
+Copyright (c) 2014 Chris Jaure
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
